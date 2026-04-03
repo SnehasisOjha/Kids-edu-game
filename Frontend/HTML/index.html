@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth System - College Project</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="bg-body">
+
+    <div class="container">
+        
+        <div id="login-form" class="auth-form active">
+            <h2>Login</h2>
+            <form onsubmit="event.preventDefault(); alert('Ready for PHP Integration!');">
+                <input type="text" placeholder="Enter Email ID" required>
+                <input type="password" placeholder="Enter Password" required>
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+            <div class="links">
+                <a onclick="showForm('forgot', '#6c5f8f')">Forgot Password?</a>
+                <a onclick="showForm('signup', '#43e97b')">New User? Sign Up</a>
+            </div>
+        </div>
+
+        <div id="signup-form" class="auth-form">
+            <h2>Create Account</h2>
+            <form onsubmit="return validateSignup(event)">
+                <input type="text" id="s-name" placeholder="Full Name" required>
+                <input type="number" id="s-age" placeholder="Age" required>
+                <input type="email" id="s-email" placeholder="Email" required>
+                <input type="text" id="s-phone" placeholder="Phone (10 digits)" required>
+                <input type="password" id="s-pass" placeholder="Password" required>
+                <input type="password" id="s-confirm" placeholder="Confirm Password" required>
+                <button type="submit" class="btn-signup">Sign Up</button>
+            </form>
+            <p id="signup-msg" class="msg"></p>
+            <div class="links">
+                <a onclick="showForm('login', '#4facfe')">Back to Login</a>
+            </div>
+        </div>
+
+        <div id="forgot-form" class="auth-form">
+            <h2>Reset Password</h2>
+            <form onsubmit="return validateReset(event)">
+                <input type="email" id="f-email" placeholder="Enter Registered Email" required>
+                <input type="password" id="f-pass" placeholder="New Password" required>
+                <input type="password" id="f-confirm" placeholder="Confirm New Password" required>
+                <button type="submit" class="btn-forgot">Reset Password</button>
+            </form>
+            <p id="forgot-msg" class="msg"></p>
+            <div class="links">
+                <a onclick="showForm('login', '#4facfe')">Back to Login</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Function to switch between forms
+        function showForm(formType, bgColor) {
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById(formType + '-form').classList.add('active');
+            document.getElementById('bg-body').style.background = bgColor;
+            
+            // Reset messages when switching
+            document.getElementById('signup-msg').innerText = "";
+            document.getElementById('forgot-msg').innerText = "";
+        }
+
+        function validateSignup(e) {
+            e.preventDefault();
+            let name = document.getElementById("s-name").value.trim();
+            let phone = document.getElementById("s-phone").value;
+            let pass = document.getElementById("s-pass").value;
+            let confirm = document.getElementById("s-confirm").value;
+            let msg = document.getElementById("signup-msg");
+
+            if (!/^[A-Za-z ]+$/.test(name)) {
+                msg.style.color = "red";
+                msg.innerText = "Invalid Name (Letters only)";
+                return false;
+            }
+            if (!/^[0-9]{10}$/.test(phone)) {
+                msg.style.color = "red";
+                msg.innerText = "Phone must be 10 digits";
+                return false;
+            }
+            if (pass !== confirm) {
+                msg.style.color = "red";
+                msg.innerText = "Passwords do not match";
+                return false;
+            }
+
+            msg.style.color = "green";
+            msg.innerText = "Signup Successful!";
+            return true;
+        }
+
+        function validateReset(e) {
+            e.preventDefault();
+            let pass = document.getElementById("f-pass").value;
+            let confirm = document.getElementById("f-confirm").value;
+            let msg = document.getElementById("forgot-msg");
+
+            if (pass !== confirm) {
+                msg.style.color = "red";
+                msg.innerText = "Passwords do not match!";
+                return false;
+            }
+
+            msg.style.color = "green";
+            msg.innerText = "Password Reset Successful!";
+            return true;
+        }
+    </script>
+</body>
+</html>

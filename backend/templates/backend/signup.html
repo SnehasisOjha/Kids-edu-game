@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Kids Edu Game</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'backend/style.css' %}">
+</head>
+<body id="bg-body" style="background: linear-gradient(to right, #43e97b, #38f9d7);">
+
+    <div class="container">
+        <div id="signup-form" class="auth-form active">
+            <h2>Create Account</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn-signup">Sign Up</button>
+            </form>
+            {% if form.errors %}
+                <p style="color: red;">{{ form.errors }}</p>
+            {% endif %}
+            <div class="links">
+                <a href="{% url 'index' %}">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

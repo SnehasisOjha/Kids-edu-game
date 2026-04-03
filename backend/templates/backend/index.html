@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kids Edu Game - Auth</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'backend/style.css' %}">
+</head>
+<body id="bg-body">
+
+    <div class="container">
+        
+        <div id="login-form" class="auth-form active">
+            <h2>Login</h2>
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="email" name="login-email" placeholder="Enter Email ID" required>
+                <input type="password" name="login-password" placeholder="Enter Password" required>
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+            {% if login_errors %}
+                <p class="msg" style="color: red;">
+                    {% for error in login_errors %}
+                        • {{ error }}<br>
+                    {% endfor %}
+                </p>
+            {% endif %}
+            {% if login_success %}
+                <p class="msg" style="color: green;">
+                    ✓ Welcome back, {{ student_name }}!
+                </p>
+            {% endif %}
+            <div class="links">
+                <a onclick="showForm('forgot', '#6c5f8f')">Forgot Password?</a>
+                <a onclick="showForm('signup', '#43e97b')">New User? Sign Up</a>
+            </div>
+        </div>
+
+        <div id="signup-form" class="auth-form">
+            <h2>Create Account</h2>
+            <form method="post" action="{% url 'signup' %}" id="signup-form-elem" onsubmit="return validateSignup(event)">
+                {% csrf_token %}
+                <input type="text" id="s-name" name="name" placeholder="Full Name" required>
+                <input type="number" id="s-age" name="age" placeholder="Age" required>
+                <input type="email" id="s-email" name="email" placeholder="Email" required>
+                <input type="text" id="s-phone" name="phone" placeholder="Phone (10 digits)" required>
+                <input type="password" id="s-pass" name="password" placeholder="Password" required>
+                <input type="password" id="s-confirm" name="password_confirm" placeholder="Confirm Password" required>
+                <button type="submit" class="btn-signup">Sign Up</button>
+            </form>
+            <p id="signup-msg" class="msg">
+                {% if signup_errors %}
+                    <strong style="color: red;">Errors:</strong><br>
+                    {% for error in signup_errors %}
+                        • {{ error }}<br>
+                    {% endfor %}
+                {% endif %}
+                {% if signup_success %}
+                    <strong style="color: green;">✓ Signup successful!</strong><br>
+                    User ID: {{ new_student_id }}<br>
+                    Name: {{ new_student_name }}<br>
+                    Data saved to database!
+                {% endif %}
+            </p>
+            <div class="links">
+                <a onclick="showForm('login', '#4facfe')">Back to Login</a>
+            </div>
+        </div>
+
+        <div id="forgot-form" class="auth-form">
+            <h2>Reset Password</h2>
+            <form method="post" action="{% url 'forgot_password' %}" onsubmit="return validateReset(event)">
+                {% csrf_token %}
+                <input type="email" id="f-email" name="f-email" placeholder="Enter Registered Email" required>
+                <input type="password" id="f-pass" name="f-pass" placeholder="New Password" required>
+                <input type="password" id="f-confirm" name="f-confirm" placeholder="Confirm New Password" required>
+                <button type="submit" class="btn-forgot">Reset Password</button>
+            </form>
+            <p id="forgot-msg" class="msg">
+                {% if forgot_errors %}
+                    <strong style="color: red;">Errors:</strong><br>
+                    {% for error in forgot_errors %}
+                        • {{ error }}<br>
+                    {% endfor %}
+                {% endif %}
+                {% if forgot_success %}
+                    <strong style="color: green;">✓ Password reset successful! You can now login.</strong>
+                {% endif %}
+            </p>
+            <div class="links">
+                <a onclick="showForm('login', '#4facfe')">Back to Login</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Function to switch between forms
+        function showForm(formType, bgColor) {
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById(formType + '-form').classList.add('active');
+            document.getElementById('bg-body').style.background = bgColor;
+        }
+
+        function validateSignup(e) {
+            let name = document.getElementById("s-name").value.trim();
+            let phone = document.getElementById("s-phone").value;
+            let pass = document.getElementById("s-pass").value;
+            let confirm = document.getElementById("s-confirm").value;
+            let msg = document.getElementById("signup-msg");
+
+            if (!/^[A-Za-z ]+$/.test(name)) {
+                msg.style.color = "red";
+                msg.innerText = "Invalid Name (Letters only)";
+                e.preventDefault();
+                return false;
+            }
+            if (!/^[0-9]{10}$/.test(phone)) {
+                msg.style.color = "red";
+                msg.innerText = "Phone must be 10 digits";
+                e.preventDefault();
+                return false;
+            }
+            if (pass !== confirm) {
+                msg.style.color = "red";
+                msg.innerText = "Passwords do not match";
+                e.preventDefault();
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateReset(e) {
+            let pass = document.getElementById("f-pass").value;
+            let confirm = document.getElementById("f-confirm").value;
+            let msg = document.getElementById("forgot-msg");
+
+            if (pass !== confirm) {
+                msg.style.color = "red";
+                msg.innerText = "Passwords do not match!";
+                e.preventDefault();
+                return false;
+            }
+
+            // Allow form to submit to backend
+            return true;
+        }
+    </script>
+</body>
+</html>
